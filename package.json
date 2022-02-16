@@ -1,0 +1,28 @@
+{
+  "name": "typewriter-dmx",
+  "version": "0.0.1",
+  "description": "Converts plaintext input to sequenced commands for a solenoid-powered typewriter",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node --loader ts-node/esm index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/james-camilleri/typewriter-dmx.git"
+  },
+  "author": "James Camilleri",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/james-camilleri/typewriter-dmx/issues"
+  },
+  "homepage": "https://github.com/james-camilleri/typewriter-dmx#readme",
+  "devDependencies": {
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "dmx-ts": "^0.2.0"
+  }
+}
