@@ -1,10 +1,12 @@
 import { DMX, EnttecUSBDMXProDriver, NullDriver } from 'dmx-ts'
+import express from 'express'
 
 import { queueDmxUpdates } from './queue-commands/index.js'
 import { textToDmx } from './text-to-dmx/index.js'
 
-const DEBUG_UNIVERSE = false
+const DEBUG_UNIVERSE = true
 const USB_PORT = 'COM3'
+const NETWORK_PORT = 1992
 
 function getDriver() {
   if (DEBUG_UNIVERSE) return new NullDriver()
@@ -15,9 +17,16 @@ async function main() {
   const dmx = new DMX()
   const typewriterUniverse = await dmx.addUniverse('typewriter', getDriver())
 
-  const TEST_TEXT = 'hhhhhhhhhh' // LED is currently hooked up to channel 17.
-  const channelData = textToDmx(TEST_TEXT)
-  queueDmxUpdates(typewriterUniverse, channelData)
+  const app = express().use(express.json())
+  app.post('/', (req, res) => {
+    const { text } = req.body
+    const channelData = textToDmx(text)
+    queueDmxUpdates(typewriterUniverse, channelData)
+
+    res.send('OK')
+  })
+
+  app.listen(NETWORK_PORT)
 }
 
 main().catch(console.error)
