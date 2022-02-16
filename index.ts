@@ -1,3 +1,6 @@
+import { dirname, join } from 'path'
+import { fileURLToPath } from 'url'
+
 import { DMX, EnttecUSBDMXProDriver, NullDriver } from 'dmx-ts'
 import express from 'express'
 
@@ -18,6 +21,10 @@ async function main() {
   const typewriterUniverse = await dmx.addUniverse('typewriter', getDriver())
 
   const app = express().use(express.json())
+  app.get('/', (req, res) => {
+    res.sendFile(join(dirname(fileURLToPath(import.meta.url)), 'ui/index.html'))
+  })
+
   app.post('/', (req, res) => {
     const { text } = req.body
     const channelData = textToDmx(text)
