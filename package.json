@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "dmx-ts": "^0.2.0",
-    "express": "^4.17.2"
+    "express": "^4.17.2",
+    "ngrok": "^4.3.1",
+    "node-fetch": "^3.2.3"
   }
 }
