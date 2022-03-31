@@ -13,8 +13,8 @@ export function queueDmxUpdates(
   universe: IUniverseDriver,
   updates: UniverseData[],
 ) {
-  const KEYPRESS_TIME = 200
-  const BASE_DELAY = 500
+  const KEYPRESS_TIME = 100
+  const BASE_DELAY = 300
   const WIGGLE_PERCENTAGE = 0.2
 
   let startTime = 0
