@@ -6,14 +6,15 @@ import fetch from 'node-fetch'
 import { queueDmxUpdates } from './queue-commands/index.js'
 import { textToDmx } from './text-to-dmx/index.js'
 
-const DEBUG_UNIVERSE = true
-const USB_PORT = 'COM3'
+const DEBUG_UNIVERSE = false
+const USB_PORT_WINDOWS = 'COM3'
+const USB_PORT_PI = '/dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN236685-if00-port0'
 const NETWORK_PORT = 1992
 const CONFIG_URL = 'https://typo.digital/config'
 
 function getDriver() {
   if (DEBUG_UNIVERSE) return new NullDriver()
-  return new EnttecUSBDMXProDriver(USB_PORT)
+  return new EnttecUSBDMXProDriver(USB_PORT_PI)
 }
 
 async function connect() {
