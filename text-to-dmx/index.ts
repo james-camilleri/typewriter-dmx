@@ -15,8 +15,9 @@ export function textToDmx(text: string): UniverseData[] {
     .map(character => {
       const channel = KEYMAP[character]
 
-      if (channel != null && typeof channel === 'number')
+      if (channel != null && typeof channel === 'number') {
         return { [channel]: HIGH }
+      }
 
       if (channel != null && Array.isArray(channel)) {
         return channel.reduce(
@@ -26,7 +27,7 @@ export function textToDmx(text: string): UniverseData[] {
       }
 
       if (isUppercase(character)) {
-        return { [KEYMAP.SHIFT]: HIGH, [KEYMAP[character]]: HIGH }
+        return { [KEYMAP.SHIFT]: HIGH, [KEYMAP[character.toLowerCase()]]: HIGH }
       }
     })
     .filter(Boolean)
