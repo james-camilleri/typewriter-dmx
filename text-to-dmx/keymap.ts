@@ -1,6 +1,7 @@
 const SHIFT = 40
 
 export const KEYMAP = {
+  '!': [1, SHIFT],
   '1': 1,
   '2': 2,
   '3': 3,
