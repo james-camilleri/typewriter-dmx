@@ -14,7 +14,7 @@ export function queueDmxUpdates(
   updates: UniverseData[],
 ) {
   const KEYPRESS_TIME = 100
-  const BASE_DELAY = 300
+  const BASE_DELAY = 150
   const WIGGLE_PERCENTAGE = 0.2
 
   let startTime = 0
