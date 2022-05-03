@@ -1,7 +1,7 @@
 {
   "name": "typewriter-dmx",
-  "version": "0.0.1",
-  "description": "Converts plaintext input to sequenced commands for a solenoid-powered typewriter",
+  "version": "0.0.2",
+  "description": "Converts plaintext input to sequenced commands for a motor-powered typewriter",
   "main": "index.ts",
   "type": "module",
   "scripts": {
