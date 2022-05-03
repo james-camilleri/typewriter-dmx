@@ -9,7 +9,7 @@ function wiggle(value: number, wiggle: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-export function createCommandDmxHandler(universe: IUniverseDriver) {
+export function createDmxCommandHandler(universe: IUniverseDriver) {
   const KEYPRESS_TIME = 100
   const BASE_DELAY = 150
   const WIGGLE_PERCENTAGE = 0.2

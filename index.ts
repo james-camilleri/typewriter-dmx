@@ -6,7 +6,8 @@ import ngrok from 'ngrok'
 import fetch from 'node-fetch'
 
 import { log } from './log/index.js'
-import { createCommandDmxHandler } from './queue/handlers/dmx.js'
+import { createDmxCommandHandler } from './queue/handlers/dmx.js'
+import { createMotorCommandHandler } from './queue/handlers/motor.js'
 import { queueCommand, registerHandler } from './queue/index.js'
 import {
   configure as textToCommandConfigure,
@@ -59,6 +60,15 @@ async function loadConfig(): Promise<Config> {
 async function configure() {
   const config = await loadConfig()
   textToCommandConfigure(config)
+
+  const dmx = new DMX()
+  const typewriterUniverse = await dmx.addUniverse('typewriter', getDriver())
+
+  const dmxCommandHandler = createDmxCommandHandler(typewriterUniverse)
+  registerHandler('dmx', dmxCommandHandler)
+
+  const motorCommandHandler = createMotorCommandHandler(config)
+  registerHandler('motor', motorCommandHandler)
 }
 
 async function main() {
@@ -68,12 +78,6 @@ async function main() {
   await connect()
   await configure()
   const version = await getVersion()
-
-  const dmx = new DMX()
-  const typewriterUniverse = await dmx.addUniverse('typewriter', getDriver())
-
-  const dmxCommandHandler = createCommandDmxHandler(typewriterUniverse)
-  registerHandler('dmx', dmxCommandHandler)
 
   const app = express().use(express.json())
 
@@ -105,6 +109,10 @@ async function main() {
     }
 
     res.send('OK')
+  })
+
+  app.get('/test', (req, res) => {
+    queueCommand({ type: 'motor', data: 100 })
   })
 
   app.listen(NETWORK_PORT)
