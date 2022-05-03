@@ -6,8 +6,13 @@ import ngrok from 'ngrok'
 import fetch from 'node-fetch'
 
 import { log } from './log/index.js'
-import { queueDmxUpdates } from './queue-commands/index.js'
-import { textToDmx } from './text-to-dmx/index.js'
+import { createCommandDmxHandler } from './queue/handlers/dmx.js'
+import { queueCommand, registerHandler } from './queue/index.js'
+import {
+  configure as textToCommandConfigure,
+  textToCommands,
+} from './text-to-commands/index.js'
+import { Config } from './types'
 
 const DEBUG_UNIVERSE = false
 const USB_PORT_WINDOWS = 'COM3'
@@ -40,15 +45,35 @@ async function connect() {
   })
 }
 
+async function loadConfig(): Promise<Config> {
+  const configPayload = await (fetch(CONFIG_URL).then(res =>
+    res.json(),
+  ) as Promise<Config>)
+  const config = configPayload
+  // @ts-expect-error Convert JSON string into key map.
+  config.keyMap = JSON.parse(configPayload.keyMap)
+
+  return config
+}
+
+async function configure() {
+  const config = await loadConfig()
+  textToCommandConfigure(config)
+}
+
 async function main() {
   log.info('Initialising typewriter-dmx')
   log.info(`Debug mode ${DEBUG_UNIVERSE ? 'enabled' : 'disabled'}`)
 
   await connect()
+  await configure()
   const version = await getVersion()
 
   const dmx = new DMX()
   const typewriterUniverse = await dmx.addUniverse('typewriter', getDriver())
+
+  const dmxCommandHandler = createCommandDmxHandler(typewriterUniverse)
+  registerHandler('dmx', dmxCommandHandler)
 
   const app = express().use(express.json())
 
@@ -56,13 +81,24 @@ async function main() {
     res.send({ version })
   })
 
+  app.get('/config/refresh', async (req, res) => {
+    try {
+      await configure()
+    } catch {
+      res.status(500).send()
+      return
+    }
+
+    res.send('OK')
+  })
+
   app.post('/', (req, res) => {
     try {
       const { text } = req.body
       log.info('Received text:', text)
-      const channelData = textToDmx(req.body.text)
-      log.info('Converted to channel data:', channelData)
-      queueDmxUpdates(typewriterUniverse, channelData)
+      const commands = textToCommands(req.body.text)
+      log.info('Converted to commands:', commands)
+      queueCommand(...commands)
     } catch (e) {
       res.status(500).send(e)
       return
