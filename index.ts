@@ -111,8 +111,8 @@ async function main() {
     res.send('OK')
   })
 
-  app.get('/test', (req, res) => {
-    queueCommand({ type: 'motor', data: 100 })
+  app.get('/test/:amount', (req, res) => {
+    queueCommand({ type: 'motor', data: req.params.amount })
   })
 
   app.listen(NETWORK_PORT)

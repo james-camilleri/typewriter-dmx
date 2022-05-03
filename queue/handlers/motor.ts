@@ -1,37 +1,29 @@
-import { init } from 'raspi'
-import { DigitalOutput, HIGH, LOW, PULL_DOWN } from 'raspi-gpio'
+import { Gpio } from 'pigpio'
 
 import { Config } from '../../types'
 
-const PULSE_PIN = 'GPIO17'
-const DIRECTION_PIN = 'GPIO27'
-const ENABLE_PIN = 'GPIO22'
+const LOW = 0
+const HIGH = 1
+
+const PULSE_PIN = new Gpio(17, { mode: Gpio.OUTPUT })
+const DIRECTION_PIN = new Gpio(27, { mode: Gpio.OUTPUT })
+const ENABLE_PIN = new Gpio(22, { mode: Gpio.OUTPUT })
 
 export function createMotorCommandHandler(config: Config) {
   const { charsPerLine, newlineRotationDegrees } = config
 
-  return async (degrees: number) => {
+  return async (amount: number) => {
     return new Promise<void>((resolve, reject) => {
-      init(() => {
-        const pullResistor = PULL_DOWN
 
-        const pulse = new DigitalOutput({ pin: PULSE_PIN })
-        const enable = new DigitalOutput({ pin: ENABLE_PIN })
-        const direction = new DigitalOutput({
-          pin: DIRECTION_PIN })
+      // TODO: This is definitely wrong and moves weird.
+      PULSE_PIN.servoWrite(amount)
+      DIRECTION_PIN.digitalWrite(HIGH)
+      ENABLE_PIN.digitalWrite(HIGH)
 
-        pulse.write(HIGH)
-        enable.write(HIGH)
-        direction.write(HIGH)
-
-        setTimeout(() => {
-          pulse.write(LOW)
-          enable.write(LOW)
-          direction.write(LOW)
-
-          resolve()
-        }, 1000)
-      })
+      setTimeout(() => {
+        ENABLE_PIN.digitalWrite(LOW)
+        resolve()
+      }, 5000)
     })
   }
 }
