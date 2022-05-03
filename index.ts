@@ -1,3 +1,5 @@
+import { promises as fs } from 'fs'
+
 import { DMX, EnttecUSBDMXProDriver, NullDriver } from 'dmx-ts'
 import express from 'express'
 import ngrok from 'ngrok'
@@ -19,6 +21,14 @@ function getDriver() {
   return new EnttecUSBDMXProDriver(USB_PORT_PI)
 }
 
+async function getVersion() {
+  const packageJson = await fs
+    .readFile('package.json', { encoding: 'utf-8' })
+    .then(JSON.parse)
+
+  return packageJson.version
+}
+
 async function connect() {
   log.info('Creating ngrok tunnel')
   const url = await ngrok.connect(NETWORK_PORT)
@@ -30,13 +40,12 @@ async function connect() {
   })
 }
 
-async function newline() {}
-
 async function main() {
   log.info('Initialising typewriter-dmx')
   log.info(`Debug mode ${DEBUG_UNIVERSE ? 'enabled' : 'disabled'}`)
 
   await connect()
+  const version = await getVersion()
 
   const dmx = new DMX()
   const typewriterUniverse = await dmx.addUniverse('typewriter', getDriver())
@@ -44,7 +53,7 @@ async function main() {
   const app = express().use(express.json())
 
   app.get('/heartbeat', (req, res) => {
-    res.send('OK')
+    res.send({ version })
   })
 
   app.post('/', (req, res) => {
