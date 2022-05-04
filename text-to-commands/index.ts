@@ -14,7 +14,7 @@ const SINGLE_CHAR_MOTOR_RELEASE = {
 let CHARS_PER_LINE = 50
 let CARRIAGE_RETURN_STEPS = 1000
 let NEWLINE_RETURN_STEPS = 1000
-let KEYMAP: { [key: string]: number | number[] } = {}
+let KEYMAP: { [key: string]: number } = {}
 
 export function configure({
   charsPerLine,
@@ -64,6 +64,17 @@ function splitToLines(text: string) {
   return text.split('\n').map(splitLongLine).flat()
 }
 
+function generateShiftSet(channelToShift: number) {
+  const start = { universeData: { [KEYMAP.SHIFT]: HIGH }, reset: false }
+  const combined = {
+    universeData: { [KEYMAP.SHIFT]: HIGH, [channelToShift]: HIGH },
+    reset: false,
+  }
+  const end = { [KEYMAP.SHIFT]: HIGH }
+
+  return [start, combined, end]
+}
+
 function charsToDmxData(text: string): UniverseData[] {
   const characters = text.split('')
 
@@ -71,28 +82,18 @@ function charsToDmxData(text: string): UniverseData[] {
     .map(character => {
       const channel = KEYMAP[character]
 
-      if (channel != null && typeof channel === 'number') {
+      // Negative channel numbers signify a SHIFT,
+      // until we have time to do something less abhorrent.
+      if (channel != null && channel < 0) {
+        return generateShiftSet(Math.abs(channel))
+      }
+
+      if (channel != null) {
         return { [channel]: HIGH }
       }
 
-      if (channel != null && Array.isArray(channel)) {
-        const start = { universeData: { [channel[0]]: HIGH }, reset: false }
-        const combined = channel.reduce(
-          (universeData, channel) => ({
-            universeData: { ...universeData, [channel]: HIGH },
-            reset: false,
-          }),
-          {},
-        )
-        const end = { [channel[0]]: HIGH }
-
-        return [start, combined, end]
-      }
-
       if (isUppercase(character)) {
-        // TODO: Figure out why this throws a type error.
-        // @ts-expect-error
-        return { [KEYMAP.SHIFT]: HIGH, [KEYMAP[character.toLowerCase()]]: HIGH }
+        generateShiftSet(KEYMAP[character.toLowerCase()])
       }
     })
     .flat() // Flatten SHIFT sets.
