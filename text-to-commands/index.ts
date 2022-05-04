@@ -1,23 +1,36 @@
 import { UniverseData } from 'dmx-ts/dist/src/models/IUniverseDriver'
 
-import { COMMANDS } from '../queue/commands.js'
+import { COMMANDS, Command } from '../queue/commands.js'
 import { Config } from '../types'
 
 const HIGH = 255
 
+const SINGLE_CHAR_MOTOR_RELEASE = {
+  type: 'motor' as const,
+  data: { steps: -1, hold: true, speed: 'fast' },
+}
+
 // TODO: Find a less ugly way to store the "global" config.
 let CHARS_PER_LINE = 50
-let NEWLINE_ROTATION_DEGREES = 0
+let CARRIAGE_RETURN_STEPS = 1000
+let NEWLINE_RETURN_STEPS = 1000
 let KEYMAP: { [key: string]: number | number[] } = {}
 
 export function configure({
   charsPerLine,
-  newlineRotationDegrees,
+  carriageReturnSteps,
+  newlineRotationSteps,
   keyMap,
 }: Config) {
   CHARS_PER_LINE = charsPerLine
-  NEWLINE_ROTATION_DEGREES = newlineRotationDegrees
+  CARRIAGE_RETURN_STEPS = carriageReturnSteps
+  NEWLINE_RETURN_STEPS = newlineRotationSteps
   KEYMAP = keyMap
+}
+
+function charsToSteps(noOfChars: number) {
+  const stepsPerChar = CHARS_PER_LINE / CARRIAGE_RETURN_STEPS
+  return stepsPerChar * noOfChars
 }
 
 function isUppercase(char: string): boolean {
@@ -80,13 +93,31 @@ function charsToDmxData(text: string): UniverseData[] {
 
 export function textToCommands(text: string) {
   const lines = splitToLines(text)
-  const dmxCommandsByLine = lines
-    .map(charsToDmxData)
-    .map(dmxSequenceArray =>
-      dmxSequenceArray.map(dmxData => ({ type: COMMANDS.DMX, data: dmxData })),
-    )
+  const commandsByLine = lines.map(charsToDmxData).map(dmxSequenceArray =>
+    dmxSequenceArray
+      .map(dmxData => [
+        {
+          type: COMMANDS.MOTOR,
+          // Unwind the carriage return motor as we go, 1 char at a time.
+          data: { steps: charsToSteps(-1), hold: true, speed: 'fast' },
+        },
+        { type: COMMANDS.DMX, data: dmxData },
+      ])
+      .flat(),
+  )
 
-  return dmxCommandsByLine
-    .map(dmxCommands => [...dmxCommands, { type: COMMANDS.MOTOR, data: 0 }])
+  return commandsByLine
+    .map(commands => [
+      ...commands,
+      // Add motor command to reverse carriage.
+      {
+        type: COMMANDS.MOTOR,
+        data: {
+          speed: 'slow',
+          // Reel in for each character, plus the additional steps for a new line.
+          steps: charsToSteps(commands.length / 2) + NEWLINE_RETURN_STEPS,
+        },
+      },
+    ])
     .flat()
 }
