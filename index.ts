@@ -111,11 +111,11 @@ async function main() {
     res.send('OK')
   })
 
-  app.get('/test/:steps/:speed', (req, res) => {
+  app.get('/test/:steps/:speed/:hold', (req, res) => {
     queueCommand({
       type: 'motor',
       data: {
-        hold: true,
+        hold: req.params.hold === 'hold',
         steps: Number(req.params.steps),
         speed: req.params.steps ?? 'slow',
       },
