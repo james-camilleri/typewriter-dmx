@@ -17,9 +17,15 @@ export interface DmxCommand extends Command {
   data: UniverseData
 }
 
+export interface MotorData {
+  steps: number
+  speed: 'slow' | 'fast'
+  hold: boolean
+}
+
 export interface MotorCommand extends Command {
   type: 'motor'
-  data: number
+  data: MotorData
 }
 
 export type CommandHandler = (Command) => void
