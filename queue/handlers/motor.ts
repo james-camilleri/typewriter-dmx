@@ -71,7 +71,7 @@ export function createMotorCommandHandler(config: Config) {
 
       // Add 0.2ms safety gap per step.
       // Based off an approximate value of 1.5s for 8000 steps.
-      const safetyGap = 0.2 * steps
+      const safetyGap = 10 * steps
 
       // I have no idea why it's currently taking twice as long as expected.
       const timeoutLength = (lengthMicroseconds / 1000) * 2 + safetyGap
