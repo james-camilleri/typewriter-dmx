@@ -29,7 +29,7 @@ export function configure({
 }
 
 function charsToSteps(noOfChars: number) {
-  const stepsPerChar = CHARS_PER_LINE / CARRIAGE_RETURN_STEPS
+  const stepsPerChar = CARRIAGE_RETURN_STEPS / CHARS_PER_LINE
   return stepsPerChar * noOfChars
 }
 
