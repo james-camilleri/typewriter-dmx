@@ -100,7 +100,7 @@ async function main() {
     try {
       const { text } = req.body
       log.info('Received text:', text)
-      const commands = textToCommands(req.body.text.toLowerCase())
+      const commands = textToCommands(req.body.text)
       log.info('Converted to commands:', commands)
       queueCommand(...commands)
     } catch (e) {

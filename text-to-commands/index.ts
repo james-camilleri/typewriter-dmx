@@ -76,10 +76,14 @@ function charsToDmxData(text: string): UniverseData[] {
       }
 
       if (channel != null && Array.isArray(channel)) {
-        return channel.reduce(
+        const start = { [channel[0]]: HIGH }
+        const combined = channel.reduce(
           (universeData, channel) => ({ ...universeData, [channel]: HIGH }),
           {},
         )
+        const end = { [channel[0]]: HIGH }
+
+        return [start, combined, end]
       }
 
       if (isUppercase(character)) {
@@ -88,6 +92,7 @@ function charsToDmxData(text: string): UniverseData[] {
         return { [KEYMAP.SHIFT]: HIGH, [KEYMAP[character.toLowerCase()]]: HIGH }
       }
     })
+    .flat() // Flatten SHIFT sets pairs
     .filter(Boolean)
 }
 
