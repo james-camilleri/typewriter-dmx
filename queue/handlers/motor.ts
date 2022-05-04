@@ -1,6 +1,7 @@
 import pigpio, { Gpio } from 'pigpio'
 
 import { Config } from '../../types'
+import { MotorData } from '../commands'
 
 const LOW = 0
 const HIGH = 1
@@ -25,18 +26,13 @@ function getLoopParams(steps: number | string) {
   return [by1, by256]
 }
 
-interface MotorData {
-  steps: number
-  speed: 'slow' | 'fast'
-}
-
 export function createMotorCommandHandler(config: Config) {
-  const { charsPerLine, newlineRotationDegrees, slowDelay, fastDelay } = config
+  const { slowDelay, fastDelay } = config
 
-  const MICROSECOND_DELAY_SLOW = slowDelay ?? 500
-  const MICROSECOND_DELAY_FAST = fastDelay ?? 50
+  const MICROSECOND_DELAY_SLOW = slowDelay ?? 50
+  const MICROSECOND_DELAY_FAST = fastDelay ?? 10
 
-  return async ({ steps, speed = 'slow' }: MotorData) => {
+  return async ({ steps, hold, speed = 'slow' }: MotorData) => {
     return new Promise<void>((resolve, reject) => {
       pigpio.waveClear()
       ENABLE.digitalWrite(HIGH)
@@ -44,7 +40,7 @@ export function createMotorCommandHandler(config: Config) {
       const usDelay =
         speed === 'slow' ? MICROSECOND_DELAY_SLOW : MICROSECOND_DELAY_FAST
 
-      const clockwise = steps > 0
+      const clockwise = steps >= 0
       const pin1 = clockwise ? CONTROL_PIN_1 : CONTROL_PIN_2
       const pin2 = clockwise ? CONTROL_PIN_2 : CONTROL_PIN_1
 
@@ -73,12 +69,15 @@ export function createMotorCommandHandler(config: Config) {
       // TODO: Remove the number cast later.
       const lengthMicroseconds = pigpio.waveGetMicros() * Number(steps)
 
-      // Add 1.5s safety gap.
+      // Add 0.2ms safety gap per step.
+      // Based off an approximate value of 1.5s for 8000 steps.
+      const safetyGap = 0.2 * steps
+
       // I have no idea why it's currently taking twice as long as expected.
-      const timeoutLength = (lengthMicroseconds / 1000) * 2 + 1500
+      const timeoutLength = (lengthMicroseconds / 1000) * 2 + safetyGap
 
       setTimeout(() => {
-        ENABLE.digitalWrite(LOW)
+        if (hold) ENABLE.digitalWrite(LOW)
         pigpio.waveDelete(waveId)
         resolve()
       }, timeoutLength)
