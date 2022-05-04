@@ -77,7 +77,7 @@ export function createMotorCommandHandler(config: Config) {
       const timeoutLength = (lengthMicroseconds / 1000) * 2 + safetyGap
 
       setTimeout(() => {
-        if (hold) ENABLE.digitalWrite(LOW)
+        if (!hold) ENABLE.digitalWrite(LOW)
         pigpio.waveDelete(waveId)
         resolve()
       }, timeoutLength)
