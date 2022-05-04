@@ -14,15 +14,18 @@ export function createDmxCommandHandler(universe: IUniverseDriver) {
   const BASE_DELAY = 150
   const WIGGLE_PERCENTAGE = 0.2
 
-  return async (dmxCommand: UniverseData) => {
+  return async (
+    dmxCommand: UniverseData | { universeData: UniverseData; reset: boolean },
+  ) => {
     return new Promise<void>((resolve, reject) => {
       // Send initial command.
-      console.log('sending dmx command', dmxCommand)
-      universe.update(dmxCommand)
+      universe.update(dmxCommand['universeData'] ?? dmxCommand)
 
       // Reset DMX state after set delay.
       setTimeout(() => {
-        universe.updateAll(0)
+        if (dmxCommand['reset'] !== false) {
+          universe.updateAll(0)
+        }
 
         // End command after random pause.
         setTimeout(() => resolve(), wiggle(BASE_DELAY, WIGGLE_PERCENTAGE))

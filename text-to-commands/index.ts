@@ -76,9 +76,12 @@ function charsToDmxData(text: string): UniverseData[] {
       }
 
       if (channel != null && Array.isArray(channel)) {
-        const start = { [channel[0]]: HIGH }
+        const start = { universeData: { [channel[0]]: HIGH }, reset: false }
         const combined = channel.reduce(
-          (universeData, channel) => ({ ...universeData, [channel]: HIGH }),
+          (universeData, channel) => ({
+            universeData: { ...universeData, [channel]: HIGH },
+            reset: false,
+          }),
           {},
         )
         const end = { [channel[0]]: HIGH }
@@ -92,7 +95,7 @@ function charsToDmxData(text: string): UniverseData[] {
         return { [KEYMAP.SHIFT]: HIGH, [KEYMAP[character.toLowerCase()]]: HIGH }
       }
     })
-    .flat() // Flatten SHIFT sets pairs
+    .flat() // Flatten SHIFT sets.
     .filter(Boolean)
 }
 
