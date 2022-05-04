@@ -5,9 +5,6 @@ import { Config } from '../../types'
 const LOW = 0
 const HIGH = 1
 
-const MICROSECOND_DELAY_SLOW = 500
-const MICROSECOND_DELAY_FAST = 50
-
 const CONTROL_PIN_1 = 17
 const CONTROL_PIN_2 = 27
 const ENABLE_PIN = 22
@@ -30,7 +27,10 @@ function getLoopParams(steps: number | string) {
 }
 
 export function createMotorCommandHandler(config: Config) {
-  const { charsPerLine, newlineRotationDegrees } = config
+  const { charsPerLine, newlineRotationDegrees, slowDelay, fastDelay } = config
+  
+  const MICROSECOND_DELAY_SLOW = slowDelay ?? 500
+  const MICROSECOND_DELAY_FAST = fastDelay ?? 50
 
   return async ({ steps, speed = 'slow' }: { steps: number, speed: 'slow' | 'fast' }) => {
     return new Promise<void>((resolve, reject) => {
