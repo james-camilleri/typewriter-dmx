@@ -99,8 +99,7 @@ export function textToCommands(text: string) {
         {
           type: COMMANDS.MOTOR,
           // Unwind the carriage return motor as we go, 1 char at a time.
-          // data: { steps: charsToSteps(-1), hold: true, speed: 'fast' },
-          data: { steps: -100, hold: true, speed: 'fast' },
+          data: { steps: charsToSteps(-1), hold: true, speed: 'fast' },
         },
         { type: COMMANDS.DMX, data: dmxData },
       ])
@@ -115,6 +114,7 @@ export function textToCommands(text: string) {
         type: COMMANDS.MOTOR,
         data: {
           speed: 'slow',
+          hold: true,
           // Reel in for each character, plus the additional steps for a new line.
           steps: charsToSteps(commands.length / 2) + NEWLINE_RETURN_STEPS,
         },
@@ -123,6 +123,7 @@ export function textToCommands(text: string) {
         type: COMMANDS.MOTOR,
         data: {
           speed: 'slow',
+          hold: true,
           // Reel the lever back out.
           steps: -NEWLINE_RETURN_STEPS,
         },

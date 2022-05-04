@@ -115,7 +115,7 @@ async function main() {
     queueCommand({
       type: 'motor',
       data: {
-        hold: false,
+        hold: true,
         steps: Number(req.params.steps),
         speed: req.params.steps ?? 'slow',
       },
