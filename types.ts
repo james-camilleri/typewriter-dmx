@@ -4,5 +4,5 @@ export interface Config {
   newlineRotationSteps: number
   delaySlow: number
   delayFast: number
-  keyMap: { [key: string]: number | number[] }
+  keyMap: { [key: string]: number }
 }
