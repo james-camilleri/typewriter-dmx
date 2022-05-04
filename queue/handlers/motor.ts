@@ -27,10 +27,10 @@ function getLoopParams(steps: number | string) {
 }
 
 export function createMotorCommandHandler(config: Config) {
-  const { slowDelay, fastDelay } = config
+  const { delaySlow, delayFast } = config
 
-  const MICROSECOND_DELAY_SLOW = slowDelay ?? 50
-  const MICROSECOND_DELAY_FAST = fastDelay ?? 10
+  const MICROSECOND_DELAY_SLOW = delaySlow ?? 200
+  const MICROSECOND_DELAY_FAST = delayFast ?? 50
 
   return async ({ steps, hold, speed = 'slow' }: MotorData) => {
     return new Promise<void>((resolve, reject) => {
