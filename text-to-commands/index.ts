@@ -93,7 +93,7 @@ function charsToDmxData(text: string): UniverseData[] {
       }
 
       if (isUppercase(character)) {
-        generateShiftSet(KEYMAP[character.toLowerCase()])
+        return generateShiftSet(KEYMAP[character.toLowerCase()])
       }
     })
     .flat() // Flatten SHIFT sets.
