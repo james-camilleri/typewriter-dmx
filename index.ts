@@ -36,8 +36,13 @@ async function getVersion() {
 }
 
 async function connect() {
+  log.info('Fetching ngrok API key')
+  const { authtoken } = await (fetch(`${CONFIG_URL}/ngrok`).then(res =>
+    res.json(),
+  ) as Promise<{ authtoken: string }>)
+
   log.info('Creating ngrok tunnel')
-  const url = await ngrok.connect(NETWORK_PORT)
+  const url = await ngrok.connect({ authtoken, addr: NETWORK_PORT })
 
   log.info('Pushing tunnel URL to TypOnline')
   await fetch(`${CONFIG_URL}/ngrok`, {
