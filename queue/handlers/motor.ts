@@ -72,12 +72,11 @@ export function createMotorCommandHandler(config: Config) {
         ])
       }
 
-      // TODO: Remove the number cast later.
       const lengthMicroseconds = pigpio.waveGetMicros() * Math.abs(steps)
 
       // Add 0.2ms safety gap per step.
       // Based off an approximate value of 1.5s for 8000 steps.
-      const safetyGap = 1 * Math.abs(steps)
+      const safetyGap = Math.max(0.2 * Math.abs(steps), 100)
 
       // I have no idea why it's currently taking twice as long as expected.
       const timeoutLength = (lengthMicroseconds / 1000) * 2 + safetyGap
