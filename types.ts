@@ -5,4 +5,5 @@ export interface Config {
   delaySlow: number
   delayFast: number
   keyMap: { [key: string]: number }
+  ngrokApiKey: string
 }

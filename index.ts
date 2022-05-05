@@ -35,12 +35,7 @@ async function getVersion() {
   return packageJson.version
 }
 
-async function connect() {
-  log.info('Fetching ngrok API key')
-  const { authtoken } = await (fetch(`${CONFIG_URL}/ngrok`).then(res =>
-    res.json(),
-  ) as Promise<{ authtoken: string }>)
-
+async function connect(authtoken) {
   log.info('Creating ngrok tunnel')
   const url = await ngrok.connect({ authtoken, addr: NETWORK_PORT })
 
@@ -74,14 +69,16 @@ async function configure() {
 
   const motorCommandHandler = createMotorCommandHandler(config)
   registerHandler('motor', motorCommandHandler)
+
+  return config
 }
 
 async function main() {
   log.info('Initialising typewriter-dmx')
   log.info(`Debug mode ${DEBUG_UNIVERSE ? 'enabled' : 'disabled'}`)
 
-  await connect()
-  await configure()
+  const { ngrokApiKey } = await configure()
+  await connect(ngrokApiKey)
   const version = await getVersion()
 
   const app = express().use(express.json())
