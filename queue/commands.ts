@@ -9,7 +9,7 @@ export type CommandType = typeof COMMANDS[keyof typeof COMMANDS]
 
 export interface Command {
   type: CommandType
-  data: any
+  data?: any
 }
 
 export interface DmxCommand extends Command {

@@ -14,6 +14,7 @@ const ENABLE = new Gpio(ENABLE_PIN, { mode: Gpio.OUTPUT })
 const SWITCH = new Gpio(SWITCH_PIN, {
   mode: Gpio.INPUT,
   pullUpDown: Gpio.PUD_UP,
+  edge: Gpio.EITHER_EDGE,
 })
 
 CONTROL_1.digitalWrite(LOW)
@@ -60,7 +61,6 @@ export function createMotorCommandHandler() {
       ENABLE.digitalWrite(HIGH)
 
       SWITCH.once('interrupt', (level) => {
-        console.log('switch level is', level)
         ENABLE.digitalWrite(LOW)
         resolve()
       })

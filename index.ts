@@ -67,7 +67,7 @@ async function configure() {
   const dmxCommandHandler = createDmxCommandHandler(typewriterUniverse)
   registerHandler('dmx', dmxCommandHandler)
 
-  const motorCommandHandler = createMotorCommandHandler(config)
+  const motorCommandHandler = createMotorCommandHandler()
   registerHandler('motor', motorCommandHandler)
 
   return config
