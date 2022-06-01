@@ -9,14 +9,23 @@ const HIGH = 1
 const CONTROL_PIN_1 = 17
 const CONTROL_PIN_2 = 27
 const ENABLE_PIN = 22
+const SWITCH_PIN = 26
 
 const CONTROL_1 = new Gpio(CONTROL_PIN_1, { mode: Gpio.OUTPUT })
 const CONTROL_2 = new Gpio(CONTROL_PIN_2, { mode: Gpio.OUTPUT })
 const ENABLE = new Gpio(ENABLE_PIN, { mode: Gpio.OUTPUT })
+const SWITCH = new Gpio(SWITCH_PIN, {
+  mode: Gpio.INPUT,
+  pullUpDown: Gpio.PUD_UP,
+})
 
 CONTROL_1.digitalWrite(LOW)
 CONTROL_2.digitalWrite(LOW)
 ENABLE.digitalWrite(LOW)
+
+SWITCH.on('interrupt', (level => {
+  console.log('switch level is', level)
+}))
 
 function getLoopParams(steps: number) {
   const by1 = steps % 256
