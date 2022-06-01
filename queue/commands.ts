@@ -25,7 +25,7 @@ export interface MotorData {
 
 export interface MotorCommand extends Command {
   type: 'motor'
-  data: MotorData
+  data: undefined
 }
 
 export type CommandHandler = (Command) => void

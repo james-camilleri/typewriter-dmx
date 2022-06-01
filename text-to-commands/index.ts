@@ -79,7 +79,7 @@ function charsToDmxData(text: string): UniverseData[] {
   const characters = text.split('')
 
   return characters
-    .map(character => {
+    .map((character) => {
       const channel = KEYMAP[character]
 
       // Negative channel numbers signify a SHIFT,
@@ -102,41 +102,18 @@ function charsToDmxData(text: string): UniverseData[] {
 
 export function textToCommands(text: string) {
   const lines = splitToLines(text)
-  const commandsByLine = lines.map(charsToDmxData).map(dmxSequenceArray =>
-    dmxSequenceArray
-      .map(dmxData => [
-        {
-          type: COMMANDS.MOTOR,
-          // Unwind the carriage return motor as we go, 1 char at a time.
-          data: { steps: charsToSteps(-1), hold: true, speed: 'fast' },
-        },
-        { type: COMMANDS.DMX, data: dmxData },
-      ])
-      .flat(),
+  const commandsByLine = lines.map(charsToDmxData).map((dmxSequenceArray) =>
+    dmxSequenceArray.map((dmxData) => ({
+      type: COMMANDS.DMX,
+      data: dmxData,
+    })),
   )
 
   return commandsByLine
-    .map(commands => [
+    .map((commands) => [
       ...commands,
       // Add motor command to reverse carriage.
-      {
-        type: COMMANDS.MOTOR,
-        data: {
-          speed: 'slow',
-          hold: true,
-          // Reel in for each character, plus the additional steps for a new line.
-          steps: charsToSteps(commands.length / 2) + NEWLINE_RETURN_STEPS,
-        },
-      },
-      {
-        type: COMMANDS.MOTOR,
-        data: {
-          speed: 'slow',
-          hold: true,
-          // Reel the lever back out.
-          steps: -NEWLINE_RETURN_STEPS,
-        },
-      },
+      { type: COMMANDS.MOTOR },
     ])
     .flat()
 }
