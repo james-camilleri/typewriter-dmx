@@ -1,10 +1,11 @@
 {
   "name": "typewriter-dmx",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Converts plaintext input to sequenced commands for a motor-powered typewriter",
   "main": "index.ts",
   "type": "module",
   "scripts": {
+    "debug": "set DEBUG=true&& node --loader ts-node/esm index.ts",
     "start": "sudo node --loader ts-node/esm index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,6 +26,7 @@
   "dependencies": {
     "dmx-ts": "^0.2.0",
     "express": "^4.17.2",
+    "express-ws": "^5.0.2",
     "ngrok": "^4.3.1",
     "node-fetch": "^3.2.3",
     "pigpio": "^3.3.1"

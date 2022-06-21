@@ -2,9 +2,11 @@ import { promises as fs } from 'fs'
 
 import { DMX, EnttecUSBDMXProDriver, NullDriver } from 'dmx-ts'
 import express from 'express'
+import expressWs from 'express-ws'
 import ngrok from 'ngrok'
 import fetch from 'node-fetch'
 
+import { emitter } from './events/index.js'
 import { log } from './log/index.js'
 import { createDmxCommandHandler } from './queue/handlers/dmx.js'
 import { createMotorCommandHandler } from './queue/handlers/motor.js'
@@ -38,6 +40,7 @@ async function getVersion() {
 async function connect(authtoken) {
   log.info('Creating ngrok tunnel')
   const url = await ngrok.connect({ authtoken, addr: NETWORK_PORT })
+  log.info(`Tunnerl url: ${url}`)
 
   log.info('Pushing tunnel URL to TypOnline')
   await fetch(`${CONFIG_URL}/ngrok`, {
@@ -47,7 +50,7 @@ async function connect(authtoken) {
 }
 
 async function loadConfig(): Promise<Config> {
-  const configPayload = await (fetch(CONFIG_URL).then(res =>
+  const configPayload = await (fetch(CONFIG_URL).then((res) =>
     res.json(),
   ) as Promise<Config>)
   const config = configPayload
@@ -81,13 +84,14 @@ async function main() {
   await connect(ngrokApiKey)
   const version = await getVersion()
 
-  const app = express().use(express.json())
+  const server = express().use(express.json())
+  expressWs(server)
 
-  app.get('/heartbeat', (req, res) => {
+  server.get('/heartbeat', (req, res) => {
     res.send({ version })
   })
 
-  app.get('/config/refresh', async (req, res) => {
+  server.get('/refresh', async (req, res) => {
     try {
       await configure()
     } catch {
@@ -98,7 +102,7 @@ async function main() {
     res.send('OK')
   })
 
-  app.post('/', (req, res) => {
+  server.post('/', (req, res) => {
     try {
       const { text } = req.body
       log.info('Received text:', text)
@@ -113,19 +117,13 @@ async function main() {
     res.send('OK')
   })
 
-  app.get('/test/:steps/:speed/:hold', (req, res) => {
-    queueCommand({
-      type: 'motor',
-      data: {
-        hold: req.params.hold === 'hold',
-        steps: Number(req.params.steps),
-        speed: req.params.steps ?? 'slow',
-      },
-    })
-    res.send('OK')
+  server.ws('/', (ws, req) => {
+    emitter.onEvent((type, payload) =>
+      ws.send(JSON.stringify({ type, payload })),
+    )
   })
 
-  app.listen(NETWORK_PORT)
+  server.listen(NETWORK_PORT)
   log.info(`Listening on port ${NETWORK_PORT}`)
 }
 
