@@ -4,11 +4,7 @@ import { COMMANDS, Command } from '../queue/commands.js'
 import { Config } from '../types'
 
 const HIGH = 255
-
-const SINGLE_CHAR_MOTOR_RELEASE = {
-  type: 'motor' as const,
-  data: { steps: -1, hold: true, speed: 'fast' },
-}
+const MIN_LINE_LENGTH = 10
 
 // TODO: Find a less ugly way to store the "global" config.
 let CHARS_PER_LINE = 50
@@ -26,11 +22,6 @@ export function configure({
   CARRIAGE_RETURN_STEPS = carriageReturnSteps
   NEWLINE_RETURN_STEPS = newlineRotationSteps
   KEYMAP = keyMap
-}
-
-function charsToSteps(noOfChars: number) {
-  const stepsPerChar = CARRIAGE_RETURN_STEPS / CHARS_PER_LINE
-  return stepsPerChar * noOfChars
 }
 
 function isUppercase(char: string): boolean {
@@ -60,8 +51,20 @@ function splitLongLine(line: string) {
   return lines
 }
 
+function repeat(char: string, n: number) {
+  return Array(n)
+    .map(() => char)
+    .join('')
+}
+
+function padLine(line: string) {
+  return line.length < MIN_LINE_LENGTH
+    ? line + repeat(' ', MIN_LINE_LENGTH - line.length)
+    : line
+}
+
 function splitToLines(text: string) {
-  return text.split('\n').map(splitLongLine).flat()
+  return text.split('\n').map(splitLongLine).flat().map(padLine)
 }
 
 function generateShiftSet(channelToShift: number) {
