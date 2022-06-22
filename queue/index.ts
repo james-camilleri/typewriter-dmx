@@ -1,3 +1,4 @@
+import { emitter } from '../events/index.js'
 import { log } from '../log/index.js'
 import { Command, CommandHandler, CommandType } from './commands'
 
@@ -20,7 +21,10 @@ export function queueCommand(...command: Command[]) {
 
 async function execute() {
   const command = queue.shift()
-  if (!command) return
+  if (!command) {
+    emitter.fireEvent('typing-complete')
+    return
+  }
 
   const handler = handlers[command.type]
   if (!handler) {
