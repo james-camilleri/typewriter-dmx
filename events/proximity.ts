@@ -8,7 +8,6 @@ const HIGH = 1
 // The number of microseconds it takes sound to travel 1cm at 20 degrees celsius
 const MICROSECONDS_PER_CM = 1e6 / 34321
 const TRIGGER_DISTANCE_CM = 70
-const MINIMUM_TRIGGER_TIME = 2 * 1000 // milliseconds
 const PULSE_INTERVAL = 500
 
 // TODO: Set actual pins.
@@ -25,7 +24,6 @@ export default {
     })
 
     let startTick
-    let detectionTime
 
     TRIGGER.digitalWrite(LOW)
     ECHO.on('alert', (level, tick) => {
@@ -41,22 +39,9 @@ export default {
         // Divide by 2 because of round-trip to target.
         const distanceCm = diff / 2 / MICROSECONDS_PER_CM
 
-        console.log(distanceCm)
-
         if (distanceCm <= TRIGGER_DISTANCE_CM) {
-          detectionTime = detectionTime ?? Date.now()
-          if (Date.now() - detectionTime >= MINIMUM_TRIGGER_TIME) {
-            emitter.fireEvent('audience-detected')
-
-            // Set to maximum possible value to avoid firing events
-            // until the sensor "resets" after the audience member moves.
-            detectionTime = Number.MAX_VALUE
-          }
-
-          return
+          emitter.fireEvent('audience-detected')
         }
-
-        detectionTime = null
       }
     })
 
