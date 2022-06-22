@@ -23,24 +23,29 @@ ENABLE.digitalWrite(LOW)
 
 function generateWave() {
   pigpio.waveClear()
-  // TODO: The following logic can be hard-coded to one direction.
+
+  // TODO: The following logic can be hard-coded t0 one direction.
   const clockwise = true
   const pin1 = clockwise ? CONTROL_PIN_1 : CONTROL_PIN_2
   const pin2 = clockwise ? CONTROL_PIN_2 : CONTROL_PIN_1
   const usDelay = 50
+
   pigpio.waveAddGeneric([
     { gpioOn: 0, gpioOff: pin1, usDelay },
     { gpioOn: pin1, gpioOff: 0, usDelay },
     { gpioOn: pin1, gpioOff: 0, usDelay },
     { gpioOn: 0, gpioOff: pin1, usDelay },
   ])
+
   pigpio.waveAddGeneric([
     { gpioOn: pin2, gpioOff: 0, usDelay },
     { gpioOn: pin2, gpioOff: 0, usDelay },
     { gpioOn: 0, gpioOff: pin2, usDelay },
     { gpioOn: 0, gpioOff: pin2, usDelay },
   ])
+
   const waveId = pigpio.waveCreate()
+
   if (waveId >= 0) {
     // Loop wave forever.
     // See https://github.com/fivdi/pigpio/blob/master/doc/global.md#wavechainchain
