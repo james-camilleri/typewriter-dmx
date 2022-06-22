@@ -57,8 +57,10 @@ export function createMotorCommandHandler() {
       ENABLE.digitalWrite(HIGH)
 
       SWITCH.once('interrupt', (level) => {
-        ENABLE.digitalWrite(LOW)
-        resolve()
+        setTimeout(() => {
+          ENABLE.digitalWrite(LOW)
+          resolve()
+        }, 100) // Wait a wee bit, so the carriage doesn't stop pulling early.
       })
     })
   }
