@@ -105,7 +105,7 @@ async function main() {
   server.post('/', (req, res) => {
     try {
       const { text } = req.body
-      log.info('Received text:', text)
+      log.info(`Received text: "${text}"`)
       const commands = textToCommands(req.body.text)
       log.info('Converted to commands:', commands)
       queueCommand(...commands)
