@@ -4,7 +4,7 @@ import { COMMANDS, Command } from '../queue/commands.js'
 import { Config } from '../types'
 
 const HIGH = 255
-const MIN_LINE_LENGTH = 10
+const MIN_LINE_LENGTH = 20
 
 // TODO: Find a less ugly way to store the "global" config.
 let CHARS_PER_LINE = 50
