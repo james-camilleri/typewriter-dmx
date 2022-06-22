@@ -52,9 +52,7 @@ function splitLongLine(line: string) {
 }
 
 function repeat(char: string, n: number) {
-  return Array(n)
-    .map(() => char)
-    .join('')
+  return Array(n).fill(char).join('')
 }
 
 function padLine(line: string) {
