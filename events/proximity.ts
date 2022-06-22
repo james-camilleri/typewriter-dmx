@@ -12,8 +12,8 @@ const MINIMUM_TRIGGER_TIME = 2 * 1000 // milliseconds
 const PULSE_INTERVAL = 500
 
 // TODO: Set actual pins.
-const ECHO_PIN = -1
-const TRIGGER_PIN = -1
+const TRIGGER_PIN = 20
+const ECHO_PIN = 21
 
 export default {
   initialise(emitter: Emitter) {
