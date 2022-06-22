@@ -1,4 +1,4 @@
-import { Gpio } from 'pigpio-mock'
+import { Gpio } from 'pigpio'
 
 import { Emitter } from './index.js'
 

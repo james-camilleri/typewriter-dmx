@@ -1,4 +1,4 @@
-import pigpio, { Gpio } from 'pigpio-mock'
+import pigpio, { Gpio } from 'pigpio'
 
 const LOW = 0
 const HIGH = 1
