@@ -1,6 +1,6 @@
 {
   "name": "typewriter-dmx",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Converts plaintext input to sequenced commands for a motor-powered typewriter",
   "main": "index.ts",
   "type": "module",

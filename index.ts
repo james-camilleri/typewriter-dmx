@@ -22,7 +22,7 @@ const USB_PORT_WINDOWS = 'COM3'
 const USB_PORT_PI =
   '/dev/serial/by-id/usb-ENTTEC_DMX_USB_PRO_EN236685-if00-port0'
 const NETWORK_PORT = 1992
-const CONFIG_URL = 'https://typo.digital/config'
+const CONFIG_URL = 'https://typo.digital/api/config'
 
 function getDriver() {
   if (DEBUG_UNIVERSE) return new NullDriver()
