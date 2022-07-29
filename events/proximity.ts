@@ -10,7 +10,6 @@ const MICROSECONDS_PER_CM = 1e6 / 34321
 const TRIGGER_DISTANCE_CM = 70
 const PULSE_INTERVAL = 500
 
-// TODO: Set actual pins.
 const TRIGGER_PIN = 20
 const ECHO_PIN = 21
 

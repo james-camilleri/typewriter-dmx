@@ -102,6 +102,17 @@ async function main() {
     res.send('OK')
   })
 
+  server.post('/broadcast', (req, res) => {
+    try {
+      log.info(`Received payload for broadcast: "${JSON.stringify(req.body)}"`)
+
+      emitter.fireEvent('broadcast', req.body)
+    } catch (e) {
+      res.status(500).send(e)
+      return
+    }
+  })
+
   server.post('/', (req, res) => {
     try {
       const { text } = req.body
