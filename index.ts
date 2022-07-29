@@ -111,6 +111,8 @@ async function main() {
       res.status(500).send(e)
       return
     }
+    
+    res.send('OK')
   })
 
   server.post('/', (req, res) => {
