@@ -1,13 +1,13 @@
 {
   "name": "typewriter-dmx",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Converts plaintext input to sequenced commands for a motor-powered typewriter",
   "main": "index.ts",
   "type": "module",
   "scripts": {
     "debug": "set DEBUG=true&& node --loader ts-node/esm index.ts",
     "start": "sudo node --loader ts-node/esm index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/james-camilleri/typewriter-dmx#readme",
   "devDependencies": {
+    "@types/jest": "^28.1.6",
+    "jest": "^28.1.3",
+    "ts-jest": "^28.0.7",
     "ts-node": "^10.5.0",
     "typescript": "^4.5.5"
   },

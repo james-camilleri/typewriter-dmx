@@ -18,17 +18,17 @@ export function configure({
   newlineRotationSteps,
   keyMap,
 }: Config) {
-  CHARS_PER_LINE = charsPerLine
-  CARRIAGE_RETURN_STEPS = carriageReturnSteps
-  NEWLINE_RETURN_STEPS = newlineRotationSteps
-  KEYMAP = keyMap
+  CHARS_PER_LINE = charsPerLine ?? CHARS_PER_LINE
+  CARRIAGE_RETURN_STEPS = carriageReturnSteps ?? CARRIAGE_RETURN_STEPS
+  NEWLINE_RETURN_STEPS = newlineRotationSteps ?? NEWLINE_RETURN_STEPS
+  KEYMAP = keyMap ?? KEYMAP
 }
 
 function isUppercase(char: string): boolean {
   return char.toUpperCase() === char
 }
 
-function splitLongLine(line: string) {
+export function splitLongLine(line: string) {
   if (line.length <= CHARS_PER_LINE) return line
 
   const words = line.split(' ')
@@ -47,6 +47,9 @@ function splitLongLine(line: string) {
       nextLine = [nextWord]
     }
   }
+
+  // There will always be a remaining line that hasn't been added
+  lines.push(nextLine.join(' '))
 
   return lines
 }
