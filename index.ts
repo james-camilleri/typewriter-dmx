@@ -10,6 +10,7 @@ import { emitter } from './events/index.js'
 import { log } from './log/index.js'
 import { createDmxCommandHandler } from './queue/handlers/dmx.js'
 import { createMotorCommandHandler } from './queue/handlers/motor.js'
+import { RELAYS, createRelayCommandHandler } from './queue/handlers/relay.js'
 import { queueCommand, registerHandler } from './queue/index.js'
 import {
   configure as textToCommandConfigure,
@@ -73,6 +74,19 @@ async function configure() {
   const motorCommandHandler = createMotorCommandHandler()
   registerHandler('motor', motorCommandHandler)
 
+  const relayCommandHandler = createRelayCommandHandler()
+  registerHandler('relay', relayCommandHandler)
+
+  queueCommand({
+    type: 'relay',
+    data: {
+      [RELAYS.RELAY_1]: true,
+      [RELAYS.RELAY_2]: true,
+      [RELAYS.RELAY_3]: true,
+      [RELAYS.RELAY_4]: true,
+    },
+  })
+
   return config
 }
 
@@ -111,7 +125,7 @@ async function main() {
       res.status(500).send(e)
       return
     }
-    
+
     res.send('OK')
   })
 
