@@ -27,7 +27,13 @@ const CONFIG_URL = 'https://typo.digital/api/config'
 
 function getDriver() {
   if (DEBUG_UNIVERSE) return new NullDriver()
-  return new EnttecUSBDMXProDriver(USB_PORT_PI)
+
+  try {
+    return new EnttecUSBDMXProDriver(USB_PORT_PI)
+  } catch (e) {
+    log.error('Failed to create Enttec driver')
+    return new NullDriver()
+  }
 }
 
 async function getVersion() {
