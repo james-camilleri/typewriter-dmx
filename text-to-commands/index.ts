@@ -1,6 +1,6 @@
 import { UniverseData } from 'dmx-ts/dist/src/models/IUniverseDriver'
 
-import { COMMANDS, Command } from '../queue/commands.js'
+import { COMMANDS } from '../queue/commands.js'
 import { Config } from '../types'
 
 const HIGH = 255
@@ -108,7 +108,7 @@ export function textToCommands(text: string) {
   const lines = splitToLines(text)
   const commandsByLine = lines.map(charsToDmxData).map((dmxSequenceArray) =>
     dmxSequenceArray.map((dmxData) => ({
-      type: COMMANDS.DMX,
+      type: COMMANDS.KEY,
       data: dmxData,
     })),
   )

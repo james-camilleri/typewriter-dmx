@@ -1,22 +1,22 @@
 import { UniverseData } from 'dmx-ts/dist/src/models/IUniverseDriver'
 
 import { RelayCommand as InternalRelayCommand } from './handlers/relay'
+import { Colour } from './handlers/status-light'
 
-export const COMMANDS = {
-  DMX: 'dmx',
-  MOTOR: 'motor',
-  RELAY: 'relay',
-} as const
-
-export type CommandType = typeof COMMANDS[keyof typeof COMMANDS]
+export enum COMMANDS {
+  KEY = 'key',
+  STATUS_LIGHT = 'status-light',
+  MOTOR = 'motor',
+  RELAY = 'relay',
+}
 
 export interface Command {
-  type: CommandType
+  type: COMMANDS
   data?: any
 }
 
-export interface DmxCommand extends Command {
-  type: 'dmx'
+export interface KeyCommand extends Command {
+  type: COMMANDS.KEY
   data: UniverseData
 }
 
@@ -27,13 +27,18 @@ export interface MotorData {
 }
 
 export interface MotorCommand extends Command {
-  type: 'motor'
+  type: COMMANDS.MOTOR
   data: undefined
 }
 
 export interface RelayCommand extends Command {
-  type: 'relay'
+  type: COMMANDS.RELAY
   data: InternalRelayCommand
+}
+
+export interface StatusLightCommand extends Command {
+  type: COMMANDS.STATUS_LIGHT
+  data: Colour
 }
 
 export type CommandHandler = (Command) => void

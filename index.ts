@@ -8,9 +8,11 @@ import fetch from 'node-fetch'
 
 import { emitter } from './events/index.js'
 import { flushCache, log } from './log/index.js'
-import { createDmxCommandHandler } from './queue/handlers/dmx.js'
+import { COMMANDS } from './queue/commands.js'
+import { createKeyCommandHandler } from './queue/handlers/key.js'
 import { createMotorCommandHandler } from './queue/handlers/motor.js'
 import { RELAYS, createRelayCommandHandler } from './queue/handlers/relay.js'
+import { createStatusLightCommandHandler } from './queue/handlers/status-light.js'
 import { queueCommand, registerHandler } from './queue/index.js'
 import {
   configure as textToCommandConfigure,
@@ -72,25 +74,29 @@ async function configure() {
   textToCommandConfigure(config)
 
   const dmx = new DMX()
-  let typewriterUniverse
+  let dmxUniverse
   try {
-    typewriterUniverse = await dmx.addUniverse('typewriter', getDriver())
+    dmxUniverse = await dmx.addUniverse('typewriter', getDriver())
     log.info('Initialised DMX driver')
   } catch {
     log.error('Failed to initialise DMX driver, using null driver')
-    typewriterUniverse = await dmx.addUniverse('typewriter', new NullDriver())
+    dmxUniverse = await dmx.addUniverse('typewriter', new NullDriver())
   }
 
-  const dmxCommandHandler = createDmxCommandHandler(typewriterUniverse)
-  registerHandler('dmx', dmxCommandHandler)
-  log.info('Registered DMX command handler')
+  const keyCommandHandler = createKeyCommandHandler(dmxUniverse)
+  registerHandler(COMMANDS.KEY, keyCommandHandler)
+  log.info('Registered key command handler')
 
   const motorCommandHandler = createMotorCommandHandler()
-  registerHandler('motor', motorCommandHandler)
+  registerHandler(COMMANDS.MOTOR, motorCommandHandler)
   log.info('Registered motor command handler')
 
+  const statusLightCommandHandler = createStatusLightCommandHandler(dmxUniverse)
+  registerHandler(COMMANDS.STATUS_LIGHT, statusLightCommandHandler)
+  log.info('Registered status light command handler')
+
   const relayCommandHandler = createRelayCommandHandler()
-  registerHandler('relay', relayCommandHandler)
+  registerHandler(COMMANDS.RELAY, relayCommandHandler)
   log.info('Registered relay command handler')
 
   // Stagger relays, for dramatic effect.
@@ -99,7 +105,7 @@ async function configure() {
       setInterval(
         () =>
           queueCommand({
-            type: 'relay',
+            type: COMMANDS.RELAY,
             data: { [relay]: true },
           }),
         1000 * i,
@@ -156,6 +162,18 @@ async function main() {
       const commands = textToCommands(req.body.text)
       log.info('Converted to commands:', commands)
       queueCommand(...commands)
+    } catch (e) {
+      res.status(500).send(e)
+      return
+    }
+
+    res.send('OK')
+  })
+
+  server.post('/event', (req, res) => {
+    try {
+      log.info(`Event received: "${req.body.type}"`)
+      queueCommand(req.body)
     } catch (e) {
       res.status(500).send(e)
       return
