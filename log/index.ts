@@ -1,4 +1,4 @@
-import { emitter } from '../events'
+import { emitter } from '../events/index.js'
 
 const LOG_LEVEL = {
   ERROR: 'ERROR',
