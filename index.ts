@@ -72,26 +72,38 @@ async function configure() {
   textToCommandConfigure(config)
 
   const dmx = new DMX()
-  const typewriterUniverse = await dmx.addUniverse('typewriter', getDriver())
+  let typewriterUniverse
+  try {
+    typewriterUniverse = await dmx.addUniverse('typewriter', getDriver())
+    log.info('Initialised DMX driver')
+  } catch {
+    log.error('Failed to initialise DMX driver, using null driver')
+    typewriterUniverse = await dmx.addUniverse('typewriter', new NullDriver())
+  }
 
   const dmxCommandHandler = createDmxCommandHandler(typewriterUniverse)
   registerHandler('dmx', dmxCommandHandler)
+  log.info('Registered DMX command handler')
 
   const motorCommandHandler = createMotorCommandHandler()
   registerHandler('motor', motorCommandHandler)
+  log.info('Registered motor command handler')
 
   const relayCommandHandler = createRelayCommandHandler()
   registerHandler('relay', relayCommandHandler)
+  log.info('Registered relay command handler')
 
-  queueCommand({
+  // Stagger relays, for dramatic effect.
+  ;[
+    RELAYS.RELAY_1,
+    RELAYS.RELAY_2,
+    RELAYS.RELAY_3,
+    RELAYS.RELAY_4
+  ].forEach((relay, i) => setInterval(() => queueCommand({
     type: 'relay',
-    data: {
-      [RELAYS.RELAY_1]: true,
-      [RELAYS.RELAY_2]: true,
-      [RELAYS.RELAY_3]: true,
-      [RELAYS.RELAY_4]: true,
-    },
-  })
+    data: { [relay]: true },
+  }), 1000 * i))
+  log.info('Activated relays')
 
   return config
 }
