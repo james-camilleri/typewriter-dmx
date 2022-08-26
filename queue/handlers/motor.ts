@@ -6,7 +6,7 @@ const HIGH = 1
 const CONTROL_PIN_1 = 17
 const CONTROL_PIN_2 = 27
 const ENABLE_PIN = 22
-const SWITCH_PIN = 26
+const SWITCH_PIN = 4
 
 const CONTROL_1 = new Gpio(CONTROL_PIN_1, { mode: Gpio.OUTPUT })
 const CONTROL_2 = new Gpio(CONTROL_PIN_2, { mode: Gpio.OUTPUT })

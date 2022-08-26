@@ -3,6 +3,11 @@ import { Gpio } from 'pigpio'
 const LOW = 0
 const HIGH = 1
 
+const RELAY_1_PIN = 19
+const RELAY_2_PIN = 13
+const RELAY_3_PIN = 6
+const RELAY_4_PIN = 5
+
 export enum RELAYS {
   RELAY_1 = 'RELAY_1',
   RELAY_2 = 'RELAY_2',
@@ -11,11 +16,6 @@ export enum RELAYS {
 }
 
 export type RelayCommand = { [key in RELAYS]?: boolean }
-
-const RELAY_1_PIN = 19
-const RELAY_2_PIN = 13
-const RELAY_3_PIN = 6
-const RELAY_4_PIN = 5
 
 const RELAY_IO = {
   [RELAYS.RELAY_1]: new Gpio(RELAY_1_PIN, { mode: Gpio.OUTPUT }),

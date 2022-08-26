@@ -26,7 +26,7 @@ export default {
 
     TRIGGER.digitalWrite(LOW)
     ECHO.on('alert', (level, tick) => {
-      if (level == HIGH) {
+      if (level === HIGH) {
         startTick = tick
       } else {
         const endTick = tick
