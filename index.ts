@@ -7,7 +7,7 @@ import ngrok from 'ngrok'
 import fetch from 'node-fetch'
 
 import { emitter } from './events/index.js'
-import { log } from './log/index.js'
+import { flushCache, log } from './log/index.js'
 import { createDmxCommandHandler } from './queue/handlers/dmx.js'
 import { createMotorCommandHandler } from './queue/handlers/motor.js'
 import { RELAYS, createRelayCommandHandler } from './queue/handlers/relay.js'
@@ -94,15 +94,17 @@ async function configure() {
   log.info('Registered relay command handler')
 
   // Stagger relays, for dramatic effect.
-  ;[
-    RELAYS.RELAY_1,
-    RELAYS.RELAY_2,
-    RELAYS.RELAY_3,
-    RELAYS.RELAY_4
-  ].forEach((relay, i) => setInterval(() => queueCommand({
-    type: 'relay',
-    data: { [relay]: true },
-  }), 1000 * i))
+  ;[RELAYS.RELAY_1, RELAYS.RELAY_2, RELAYS.RELAY_3, RELAYS.RELAY_4].forEach(
+    (relay, i) =>
+      setInterval(
+        () =>
+          queueCommand({
+            type: 'relay',
+            data: { [relay]: true },
+          }),
+        1000 * i,
+      ),
+  )
   log.info('Activated relays')
 
   return config
@@ -166,6 +168,9 @@ async function main() {
     emitter.onEvent((type, payload) =>
       ws.send(JSON.stringify({ type, payload })),
     )
+
+    // Send logs to client on connection.
+    flushCache()
   })
 
   server.listen(NETWORK_PORT)

@@ -7,9 +7,18 @@ const LOG_LEVEL = {
 } as const
 type LogLevel = typeof LOG_LEVEL[keyof typeof LOG_LEVEL]
 
+const cache = []
+
 function _log(level: LogLevel, ...args: any[]) {
-  console.log(`[${level}] `, ...args)
-  emitter.fireEvent('log', `[${level}] ${args.join(' ')}`)
+  const log = `[${level}] ${args.join(' ')}`
+
+  cache.push(log)
+  console.log(log)
+  emitter.fireEvent('log', log)
+}
+
+export function flushCache() {
+  cache.forEach((log) => emitter.fireEvent('log', log))
 }
 
 export const log = {
