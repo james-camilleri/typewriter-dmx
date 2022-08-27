@@ -13,6 +13,9 @@ export default {
       pullUpDown: Gpio.PUD_DOWN,
     })
 
+    // Debounce the button signal.
+    BUTTON.glitchFilter(50000)
+
     BUTTON.on('alert', (level) => {
       emitter.fireEvent(level === HIGH ? 'button-down' : 'button-up')
     })
