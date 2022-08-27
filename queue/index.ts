@@ -1,12 +1,12 @@
 import { emitter } from '../events/index.js'
 import { log } from '../log/index.js'
-import { Command, CommandHandler, CommandType } from './commands'
+import { Command, CommandHandler, COMMANDS } from './commands'
 
 const queue: Command[] = []
-const handlers: Partial<{ [key in CommandType]: CommandHandler }> = {}
+const handlers: Partial<{ [key in COMMANDS]: CommandHandler }> = {}
 
 export function registerHandler(
-  commandType: CommandType,
+  commandType: COMMANDS,
   handler: CommandHandler,
 ) {
   handlers[commandType] = handler
