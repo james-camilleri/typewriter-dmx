@@ -155,13 +155,10 @@ async function main() {
     res.send('OK')
   })
 
-  server.post('/text', (req, res) => {
+  server.post('/event', (req, res) => {
     try {
-      const { text } = req.body
-      log.info(`Received text: "${text}"`)
-      const commands = textToCommands(req.body.text)
-      log.info('Converted to commands:', commands)
-      queueCommand(...commands)
+      log.info(`Event received: "${req.body.type}"`)
+      queueCommand(req.body)
     } catch (e) {
       res.status(500).send(e)
       return
@@ -170,10 +167,12 @@ async function main() {
     res.send('OK')
   })
 
-  server.post('/event', (req, res) => {
+  server.post('/type', (req, res) => {
     try {
-      log.info(`Event received: "${req.body.type}"`)
-      queueCommand(req.body)
+      const { text } = req.body
+      log.info(`Received text: "${text}"`)
+      const commands = textToCommands(req.body.text)
+      queueCommand(...commands)
     } catch (e) {
       res.status(500).send(e)
       return
