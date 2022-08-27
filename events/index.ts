@@ -17,7 +17,6 @@ export const emitter: Emitter = {
   },
 
   fireEvent(type: string, payload?: any) {
-    log.info(`Event fired: "${type}"`)
     handlers.forEach((handler) => handler(type, payload))
   },
 }
