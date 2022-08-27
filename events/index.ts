@@ -17,9 +17,6 @@ export const emitter: Emitter = {
   },
 
   fireEvent(type: string, payload?: any) {
-    if (type !== 'log') {
-      log.info(`Event fired: "${type}"`)
-    }
     handlers.forEach((handler) => handler(type, payload))
   },
 }
