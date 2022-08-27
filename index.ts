@@ -155,7 +155,7 @@ async function main() {
     res.send('OK')
   })
 
-  server.post('/', (req, res) => {
+  server.post('/text', (req, res) => {
     try {
       const { text } = req.body
       log.info(`Received text: "${text}"`)
