@@ -8,6 +8,7 @@ export enum COMMANDS {
   STATUS_LIGHT = 'status-light',
   MOTOR = 'motor',
   RELAY = 'relay',
+  HEARTBEAT = 'heartbeat',
 }
 
 export interface Command {

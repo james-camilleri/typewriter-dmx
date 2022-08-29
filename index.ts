@@ -8,7 +8,7 @@ import fetch from 'node-fetch'
 
 import { emitter } from './events/index.js'
 import { flushCache, log } from './log/index.js'
-import { COMMANDS } from './queue/commands.js'
+import { COMMANDS, Command } from './queue/commands.js'
 import { createKeyCommandHandler } from './queue/handlers/key.js'
 import { createMotorCommandHandler } from './queue/handlers/motor.js'
 import { RELAYS, createRelayCommandHandler } from './queue/handlers/relay.js'
@@ -185,6 +185,16 @@ async function main() {
     emitter.onEvent((type, payload) =>
       ws.send(JSON.stringify({ type, payload })),
     )
+
+    ws.on('message', (payload) => {
+      const command: Command = JSON.parse(payload)
+
+      if (command.type === COMMANDS.HEARTBEAT) {
+        ws.send(JSON.stringify({ version }))
+      } else {
+        executeCommand(command)
+      }
+    })
 
     // Send logs to client on connection.
     flushCache()
