@@ -190,7 +190,7 @@ async function main() {
       const command: Command = JSON.parse(payload)
 
       if (command.type === COMMANDS.HEARTBEAT) {
-        ws.send(JSON.stringify({ type: COMMANDS.HEARTBEAT, data: version }))
+        ws.send(JSON.stringify({ type: COMMANDS.HEARTBEAT, payload: version }))
       } else {
         executeCommand(command)
       }
