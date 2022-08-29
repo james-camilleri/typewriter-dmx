@@ -13,9 +13,12 @@ const CHANNEL_B = 3
 const ANIMATION_DURATION_SINGLE = 300
 const ANIMATION_DURATION_PULSE = 500
 
+let animation = new Animation()
+
 export function createStatusLightCommandHandler(universe: IUniverseDriver) {
   return async (colours: Colour | Colour[]) => {
-    const animation = new Animation()
+    animation.stop()
+    animation = new Animation()
 
     const isPulse = Array.isArray(colours)
     const colourArray = isPulse ? colours : [colours]
@@ -35,6 +38,6 @@ export function createStatusLightCommandHandler(universe: IUniverseDriver) {
       )
     })
 
-    animation.run(universe)
+    animation[isPulse ? 'runLoop' : 'run'](universe)
   }
 }
