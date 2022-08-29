@@ -13,7 +13,7 @@ import { createKeyCommandHandler } from './queue/handlers/key.js'
 import { createMotorCommandHandler } from './queue/handlers/motor.js'
 import { RELAYS, createRelayCommandHandler } from './queue/handlers/relay.js'
 import { createStatusLightCommandHandler } from './queue/handlers/status-light.js'
-import { queueCommand, registerHandler } from './queue/index.js'
+import { executeCommand, queueCommand, registerHandler } from './queue/index.js'
 import {
   configure as textToCommandConfigure,
   textToCommands,
@@ -104,7 +104,7 @@ async function configure() {
     (relay, i) =>
       setTimeout(
         () =>
-          queueCommand({
+          executeCommand({
             type: COMMANDS.RELAY,
             data: { [relay]: true },
           }),
@@ -158,7 +158,7 @@ async function main() {
   server.post('/event', (req, res) => {
     try {
       log.info(`Event received (typewriter): "${req.body.type}"`)
-      queueCommand(req.body)
+      executeCommand(req.body)
     } catch (e) {
       res.status(500).send(e)
       return
