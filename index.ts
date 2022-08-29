@@ -100,17 +100,22 @@ async function configure() {
   log.info('Registered relay command handler')
 
   // Stagger relays, for dramatic effect.
-  ;[RELAYS.RELAY_1, RELAYS.RELAY_2, RELAYS.RELAY_3, RELAYS.RELAY_4].forEach(
-    (relay, i) =>
-      setInterval(
-        () =>
-          queueCommand({
-            type: COMMANDS.RELAY,
-            data: { [relay]: true },
-          }),
-        1000 * i,
-      ),
-  )
+  ;[
+     RELAYS.RELAY_1,
+     RELAYS.RELAY_2,
+     RELAYS.RELAY_3,
+     RELAYS.RELAY_4
+   ].forEach(
+     (relay, i) =>
+       setTimeout(
+         () =>
+           queueCommand({
+             type: COMMANDS.RELAY,
+             data: { [relay]: true },
+           }),
+         1000 * i,
+       ),
+    )
   log.info('Activated relays')
 
   return config
