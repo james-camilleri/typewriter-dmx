@@ -11,7 +11,7 @@ const CHANNEL_R = 1
 const CHANNEL_G = 2
 const CHANNEL_B = 3
 const ANIMATION_DURATION_SINGLE = 300
-const ANIMATION_DURATION_PULSE = 1000
+const ANIMATION_DURATION_PULSE = 2000
 
 let animation = new Animation()
 
