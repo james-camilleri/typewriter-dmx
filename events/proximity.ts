@@ -16,6 +16,7 @@ const ECHO_PIN = 21
 // Flag whether an audience member has been
 // detected or not to debounce the messages.
 let detected = false
+let debounceTimeout
 
 export default {
   initialise(emitter: Emitter) {
@@ -42,13 +43,19 @@ export default {
         // Divide by 2 because of round-trip to target.
         const distanceCm = diff / 2 / MICROSECONDS_PER_CM
 
-        if (distanceCm <= TRIGGER_DISTANCE_CM && !detected) {
-          detected = true
-          emitter.fireEvent('audience-detected')
+        if (distanceCm <= TRIGGER_DISTANCE_CM) {
+          if (!detected) {
+            detected = true
+            emitter.fireEvent('audience-detected')
+          }
+
+          clearTimeout(debounceTimeout)
         }
 
         if (distanceCm > TRIGGER_DISTANCE_CM) {
-          detected = false
+          debounceTimeout = setTimeout(() => {
+            detected = false
+          }, 5000)
         }
       }
     })
