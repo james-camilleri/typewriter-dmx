@@ -11,22 +11,21 @@ const CHANNEL_R = 1
 const CHANNEL_G = 2
 const CHANNEL_B = 3
 const ANIMATION_DURATION_SINGLE = 300
-const ANIMATION_DURATION_PULSE = 2000
+const ANIMATION_DURATION_PULSE = 1500
 
 let animation = new Animation()
 
 export function createStatusLightCommandHandler(universe: IUniverseDriver) {
-  return async (colours: Colour | Colour[]) => {
+  return async (colours: Colour[]) => {
     animation.stop()
     animation = new Animation()
 
-    const isPulse = Array.isArray(colours)
-    const colourArray = isPulse ? colours : [colours]
+    const isPulse = colours.length === 1
     const duration = isPulse
       ? ANIMATION_DURATION_PULSE
       : ANIMATION_DURATION_SINGLE
 
-    colourArray.forEach(({ r, g, b }) => {
+    colours.forEach(({ r, g, b }) => {
       animation.add(
         {
           [CHANNEL_R]: r,
@@ -34,7 +33,7 @@ export function createStatusLightCommandHandler(universe: IUniverseDriver) {
           [CHANNEL_B]: b,
         },
         duration,
-        { easing: 'inOutQuad' },
+        { easing: 'outQuart' },
       )
     })
 
