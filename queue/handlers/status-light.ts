@@ -10,19 +10,31 @@ export interface Colour {
 const CHANNEL_R = 1
 const CHANNEL_G = 2
 const CHANNEL_B = 3
-const ANIMATION_DURATION = 300
+const ANIMATION_DURATION_SINGLE = 300
+const ANIMATION_DURATION_PULSE = 500
 
 export function createStatusLightCommandHandler(universe: IUniverseDriver) {
-  return async ({ r, g, b }: Colour) => {
-    new Animation()
-      .add(
+  return async (colours: Colour | Colour[]) => {
+    const animation = new Animation()
+
+    const isPulse = Array.isArray(colours)
+    const colourArray = isPulse ? colours : [colours]
+    const duration = isPulse
+      ? ANIMATION_DURATION_PULSE
+      : ANIMATION_DURATION_SINGLE
+
+    colourArray.forEach(({ r, g, b }) => {
+      animation.add(
         {
           [CHANNEL_R]: r,
           [CHANNEL_G]: g,
           [CHANNEL_B]: b,
         },
-        ANIMATION_DURATION,
+        duration,
+        { easing: 'inOutQuad' },
       )
-      .run(universe)
+    })
+
+    animation.run(universe)
   }
 }
