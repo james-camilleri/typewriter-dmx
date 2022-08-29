@@ -157,7 +157,7 @@ async function main() {
 
   server.post('/event', (req, res) => {
     try {
-      log.info(`Event received: "${req.body.type}"`)
+      log.info(`Event received (typewriter): "${req.body.type}"`)
       queueCommand(req.body)
     } catch (e) {
       res.status(500).send(e)

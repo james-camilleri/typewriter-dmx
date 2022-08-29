@@ -22,7 +22,7 @@ export function queueCommand(...command: Command[]) {
 async function execute() {
   const command = queue.shift()
   if (!command) {
-    emitter.fireEvent('typing-complete')
+    emitter.fireEvent('queue-empty')
     return
   }
 
