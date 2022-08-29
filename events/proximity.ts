@@ -45,7 +45,9 @@ export default {
         if (distanceCm <= TRIGGER_DISTANCE_CM && !detected) {
           detected = true
           emitter.fireEvent('audience-detected')
-        } else {
+        }
+
+        if (distanceCm > TRIGGER_DISTANCE_CM) {
           detected = false
         }
       }
