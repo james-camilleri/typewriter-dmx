@@ -13,6 +13,10 @@ const PULSE_INTERVAL = 500
 const TRIGGER_PIN = 20
 const ECHO_PIN = 21
 
+// Flag whether an audience member has been
+// detected or not to debounce the messages.
+let detected = false
+
 export default {
   initialise(emitter: Emitter) {
     const TRIGGER = new Gpio(TRIGGER_PIN, { mode: Gpio.OUTPUT })
@@ -38,8 +42,11 @@ export default {
         // Divide by 2 because of round-trip to target.
         const distanceCm = diff / 2 / MICROSECONDS_PER_CM
 
-        if (distanceCm <= TRIGGER_DISTANCE_CM) {
+        if (distanceCm <= TRIGGER_DISTANCE_CM && !detected) {
+          detected = true
           emitter.fireEvent('audience-detected')
+        } else {
+          detected = false
         }
       }
     })
