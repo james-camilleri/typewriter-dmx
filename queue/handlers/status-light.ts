@@ -20,7 +20,7 @@ export function createStatusLightCommandHandler(universe: IUniverseDriver) {
     animation.stop()
     animation = new Animation()
 
-    const isPulse = colours.length === 1
+    const isPulse = colours.length !== 1
     const duration = isPulse
       ? ANIMATION_DURATION_PULSE
       : ANIMATION_DURATION_SINGLE
