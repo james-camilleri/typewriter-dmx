@@ -157,7 +157,10 @@ async function main() {
 
   server.post('/event', (req, res) => {
     try {
-      log.info(`Event received (typewriter): "${req.body.type}"`)
+      if (req.body.type !== COMMANDS.HEARTBEAT) {
+        log.info(`Event received (typewriter): "${req.body.type}"`)
+      }
+
       executeCommand(req.body)
     } catch (e) {
       res.status(500).send(e)
