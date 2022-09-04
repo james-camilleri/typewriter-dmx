@@ -79,12 +79,22 @@ function generateShiftSet(channelToShift: number) {
   return [start, combined, end]
 }
 
+function pickRandom<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)]
+}
+
 function charsToDmxData(text: string): UniverseData[] {
   const characters = text.split('')
 
   return characters
     .map((character) => {
-      const channel = KEYMAP[character]
+      let channel = KEYMAP[character]
+
+      // Handle the scenario where a key has multiple assignment, i.e. the
+      // space character. Picks a random mapping from the array.
+      if (Array.isArray(channel)) {
+        channel = pickRandom(channel)
+      }
 
       // Negative channel numbers signify a SHIFT,
       // until we have time to do something less abhorrent.
