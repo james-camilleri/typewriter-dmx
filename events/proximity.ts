@@ -5,6 +5,8 @@ import { Emitter } from './index.js'
 const LOW = 0
 const HIGH = 1
 
+const DEBOUNCE_TIME = 10 * 1000
+
 // The number of microseconds it takes sound to travel 1cm at 20 degrees celsius
 const MICROSECONDS_PER_CM = 1e6 / 34321
 const TRIGGER_DISTANCE_CM = 70
@@ -55,7 +57,7 @@ export default {
         if (distanceCm > TRIGGER_DISTANCE_CM) {
           debounceTimeout = setTimeout(() => {
             detected = false
-          }, 5000)
+          }, DEBOUNCE_TIME)
         }
       }
     })

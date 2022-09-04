@@ -116,6 +116,17 @@ async function configure() {
   return config
 }
 
+// This is in an external function so it's easier to remove from the
+// event handlers array when BRB mode is disabled.
+async function sendBrbMessage(type: string) {
+  if (type !== 'audience-detected') {
+    return
+  }
+
+  const message = 'Taking a break right now, please come back later.'
+  queueCommand(...textToCommands(message))
+}
+
 async function main() {
   log.info('Initialising typewriter-dmx')
   log.info(`Debug mode ${DEBUG_UNIVERSE ? 'enabled' : 'disabled'}`)
@@ -151,6 +162,24 @@ async function main() {
       res.status(500).send(e)
       return
     }
+
+    res.send('OK')
+  })
+
+  server.post('/brb', (req, res) => {
+    const { enable } = req.body
+
+    if (enable) {
+      log.info('Enabling "Be Right Back" mode')
+
+      emitter.onEvent(sendBrbMessage)
+
+      res.send('OK')
+      return
+    }
+
+    log.info('Disabling "Be Right Back" mode')
+    emitter.removeHandler(sendBrbMessage)
 
     res.send('OK')
   })
