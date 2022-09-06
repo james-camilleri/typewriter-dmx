@@ -99,7 +99,8 @@ async function configure() {
   registerHandler(COMMANDS.RELAY, relayCommandHandler)
   log.info('Registered relay command handler')
 
-  // Stagger relays, for dramatic effect.
+  // Stagger relays, for dramatic effect, and to give the DMX
+  // controllers time to initialise before the motors are powered on.
   ;[RELAYS.RELAY_1, RELAYS.RELAY_2, RELAYS.RELAY_3, RELAYS.RELAY_4].forEach(
     (relay, i) =>
       setTimeout(
@@ -108,7 +109,7 @@ async function configure() {
             type: COMMANDS.RELAY,
             data: { [relay]: true },
           }),
-        1000 * i,
+        3000 * i,
       ),
   )
   log.info('Activated relays')
