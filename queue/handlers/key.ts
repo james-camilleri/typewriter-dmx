@@ -7,7 +7,7 @@ import {
 const START_CHANNEL = 4
 
 // Generate a chunk of channel numbers to reset.
-const RESET_CHANNELS = Array(50)
+const RESET_CHANNELS = Array(60)
   .fill(0)
   .map((_, i) => i + START_CHANNEL)
 
