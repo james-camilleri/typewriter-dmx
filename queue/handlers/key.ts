@@ -3,7 +3,7 @@ import {
   UniverseData,
 } from 'dmx-ts/dist/src/models/IUniverseDriver'
 
-import { generateWave } from './_motorWave'
+import { generateWave } from './_motorWave.js'
 
 // Channels before this are reserved for the status light.
 const START_CHANNEL = 4

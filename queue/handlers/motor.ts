@@ -1,6 +1,6 @@
 import { Gpio } from 'pigpio'
 
-import { generateWave } from './_motorWave'
+import { generateWave } from './_motorWave.js'
 
 const SWITCH_PIN = 3
 
