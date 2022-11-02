@@ -1,5 +1,6 @@
 import { Gpio } from 'pigpio'
 
+import { log } from '../../log/index.js'
 import { generateWave } from './_motorWave.js'
 
 const SWITCH_PIN = 3
@@ -17,6 +18,7 @@ export function createMotorCommandHandler() {
 
       SWITCH.once('interrupt', (level) => {
         setTimeout(() => {
+          log.info('Carriage return switch triggered')
           disableMotor()
           resolve()
         }, 100) // Wait a wee bit, so the carriage doesn't stop pulling early.

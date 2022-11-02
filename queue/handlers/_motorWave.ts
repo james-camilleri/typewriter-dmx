@@ -19,8 +19,6 @@ export function generateWave(
   direction: 'forwards' | 'backwards' = 'forwards',
   repeat?: number,
 ) {
-  pigpio.waveClear()
-
   const usDelay = 50
   const pin1 = direction === 'forwards' ? CONTROL_PIN_1 : CONTROL_PIN_2
   const pin2 = direction === 'forwards' ? CONTROL_PIN_2 : CONTROL_PIN_1
@@ -56,10 +54,12 @@ export function generateWave(
       // but we need to present tomorrow morning.
       while (waveTxBusy()) {}
       ENABLE.digitalWrite(LOW)
+      pigpio.waveClear()
     }
 
     return () => {
       ENABLE.digitalWrite(LOW)
+      pigpio.waveClear()
     }
   }
 }
