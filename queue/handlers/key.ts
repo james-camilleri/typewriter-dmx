@@ -38,7 +38,7 @@ export function createKeyCommandHandler(universe: IUniverseDriver) {
   ) => {
     return new Promise<void>((resolve, reject) => {
       // Reverse the motor to add some slack.
-      generateWave('backwards', 10)
+      generateWave('backwards', 1)
 
       // Send initial command.
       universe.update(dmxCommand['universeData'] ?? dmxCommand)
