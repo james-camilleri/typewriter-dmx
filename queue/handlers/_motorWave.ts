@@ -43,7 +43,7 @@ export function generateWave(
     // Looping instructions.
     // See https://github.com/fivdi/pigpio/blob/master/doc/global.md#wavechainchain
     const loop = repeat
-      ? [255, 0, waveId, 255, 1, repeat % 256, Math.floor(repeat % 256)] // Loop for *repeat* times
+      ? [255, 0, waveId, 255, 1, repeat % 256, Math.floor(repeat / 256)] // Loop for *repeat* times
       : [255, 0, waveId, 255, 3] // Loop forever
 
     ENABLE.digitalWrite(HIGH)
