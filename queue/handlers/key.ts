@@ -3,6 +3,8 @@ import {
   UniverseData,
 } from 'dmx-ts/dist/src/models/IUniverseDriver'
 
+import { generateWave } from './_motorWave'
+
 // Channels before this are reserved for the status light.
 const START_CHANNEL = 4
 
@@ -35,6 +37,9 @@ export function createKeyCommandHandler(universe: IUniverseDriver) {
     dmxCommand: UniverseData | { universeData: UniverseData; reset: boolean },
   ) => {
     return new Promise<void>((resolve, reject) => {
+      // Reverse the motor to add some slack.
+      generateWave('backwards', 10)
+
       // Send initial command.
       universe.update(dmxCommand['universeData'] ?? dmxCommand)
 
