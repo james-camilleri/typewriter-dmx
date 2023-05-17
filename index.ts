@@ -49,12 +49,15 @@ async function getVersion() {
 async function connect(authtoken) {
   log.info('Creating ngrok tunnel')
   const url = await ngrok.connect({ authtoken, addr: NETWORK_PORT })
-  log.info(`Tunnerl url: ${url}`)
+  log.info(`Tunnel url: ${url}`)
 
   log.info('Pushing tunnel URL to TypOnline')
   await fetch(`${CONFIG_URL}/ngrok`, {
     method: 'POST',
     body: JSON.stringify({ url }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
 }
 
