@@ -1,10 +1,9 @@
 import { Animation } from 'dmx-ts'
 import { IUniverseDriver } from 'dmx-ts/dist/src/models/IUniverseDriver'
 import { Colour } from './status-light'
+import { log } from '../../log'
 
 const DEFAULT_DURATION = 300
-
-let animation = new Animation()
 
 export function createExternalDmxHandler(universe: IUniverseDriver) {
   return async (data: {
@@ -12,8 +11,8 @@ export function createExternalDmxHandler(universe: IUniverseDriver) {
     value: number | Colour
     transitionDuration?: number
   }) => {
-    animation.stop()
-    animation = new Animation()
+    log.info('Executing external dmx command', data)
+    const animation = new Animation()
 
     const duration = data.transitionDuration ?? DEFAULT_DURATION
     animation.add(
