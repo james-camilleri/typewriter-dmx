@@ -4,11 +4,12 @@ import { RelayCommand as InternalRelayCommand } from './handlers/relay'
 import { Colour } from './handlers/status-light'
 
 export enum COMMANDS {
+  EXTERNAL_DMX = 'external-dmx',
+  HEARTBEAT = 'heartbeat',
   KEY = 'key',
-  STATUS_LIGHT = 'status-light',
   MOTOR = 'motor',
   RELAY = 'relay',
-  HEARTBEAT = 'heartbeat',
+  STATUS_LIGHT = 'status-light',
 }
 
 export interface Command {
@@ -39,7 +40,16 @@ export interface RelayCommand extends Command {
 
 export interface StatusLightCommand extends Command {
   type: COMMANDS.STATUS_LIGHT
-  data: Colour
+  data: Colour[]
+}
+
+export interface ExternalDmxCommand extends Command {
+  type: COMMANDS.EXTERNAL_DMX
+  data: {
+    channel: number
+    value: number | Colour
+    transitionDuration?: number
+  }
 }
 
 export type CommandHandler = (Command) => void

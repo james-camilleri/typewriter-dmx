@@ -14,6 +14,7 @@ import { createMotorCommandHandler } from './queue/handlers/motor.js'
 import { RELAYS, createRelayCommandHandler } from './queue/handlers/relay.js'
 import { createStatusLightCommandHandler } from './queue/handlers/status-light.js'
 import { executeCommand, queueCommand, registerHandler } from './queue/index.js'
+import { createExternalDmxHandler } from './queue/handlers/external-dmx.js'
 import {
   configure as textToCommandConfigure,
   textToCommands,
@@ -97,6 +98,10 @@ async function configure() {
   const statusLightCommandHandler = createStatusLightCommandHandler(dmxUniverse)
   registerHandler(COMMANDS.STATUS_LIGHT, statusLightCommandHandler)
   log.info('Registered status light command handler')
+
+  const externalDmxCommandHandler = createExternalDmxHandler(dmxUniverse)
+  registerHandler(COMMANDS.EXTERNAL_DMX, externalDmxCommandHandler)
+  log.info('Registered external dmx command handler')
 
   const relayCommandHandler = createRelayCommandHandler()
   registerHandler(COMMANDS.RELAY, relayCommandHandler)
